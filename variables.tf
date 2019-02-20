@@ -50,7 +50,7 @@ variable "min_worker_nodes" {
 }
 
 variable "worker_node_instance_type" {
-  default = "m4.large"
+  default = "t3.small"
 }
 
 variable "aws_authenticator_env_variables" {
