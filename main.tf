@@ -12,7 +12,7 @@ module "eks" {
   kubeconfig_aws_authenticator_env_variables = "${var.aws_authenticator_env_variables}"
   worker_group_count                         = "1"
   worker_additional_security_group_ids       = ["${aws_security_group.all_worker_mgmt.id}"]
-
+  cluster_version                            = "${var.cluster_version}"
 }
 
 resource "aws_security_group" "all_worker_mgmt" {

@@ -69,3 +69,8 @@ variable "autoscaling" {
   description = "Turn autoscaling on for your worker group"
   default     = false
 }
+
+variable "cluster_version" {
+  description = "Version of k8s to use (eks version is derived from here)"
+  default     = "1.10"
+}

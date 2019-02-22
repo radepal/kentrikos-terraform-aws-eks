@@ -17,3 +17,6 @@ variable "no_proxy" {}
 variable "key_name" {}
 
 variable "autoscaling" {}
+
+variable "cluster_version" {}
+
