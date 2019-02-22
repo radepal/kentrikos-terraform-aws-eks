@@ -64,3 +64,8 @@ variable "tags" {
   type        = "map"
   default     = {}
 }
+
+variable "autoscaling" {
+  description = "Turn autoscaling on for your worker group"
+  default     = false
+}

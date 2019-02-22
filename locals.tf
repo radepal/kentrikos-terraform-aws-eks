@@ -10,6 +10,10 @@ locals {
       pre_userdata         = "${data.template_file.http_proxy_workergroup.rendered}" # userdata to pre-append to the default userdata.
       additional_userdata  = ""                                                      # userdata to append to the default userdata.
       subnets              = "${join(",", var.private_subnets)}"                     # A comma delimited string of subnets to place the worker nodes in. i.e. subnet-123,subnet-456,subnet-789
+      autoscaling_enabled  = "${var.autoscaling}"
+      enable_monitoring    = "${var.autoscaling}"
+      enabled_metrics      = "${var.autoscaling == true ? "GroupMinSize,GroupMaxSize,GroupDesiredCapacity,GroupTerminatingInstances,GroupInServiceInstances,GroupTotalInstances": ""}"
+      protect_from_scale_in = "${var.autoscaling}"
     },
   ]
 

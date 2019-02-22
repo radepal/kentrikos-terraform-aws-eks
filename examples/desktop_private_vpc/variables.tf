@@ -15,3 +15,5 @@ variable "http_proxy" {}
 variable "no_proxy" {}
 
 variable "key_name" {}
+
+variable "autoscaling" {}
