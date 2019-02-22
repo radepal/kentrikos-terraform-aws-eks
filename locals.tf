@@ -10,10 +10,21 @@ locals {
       pre_userdata          = "${data.template_file.http_proxy_workergroup.rendered}" # userdata to pre-append to the default userdata.
       additional_userdata   = ""                                                      # userdata to append to the default userdata.
       subnets               = "${join(",", var.private_subnets)}"                     # A comma delimited string of subnets to place the worker nodes in. i.e. subnet-123,subnet-456,subnet-789
-      autoscaling_enabled   = "${var.autoscaling}"
-      protect_from_scale_in = "${var.autoscaling}"
+      autoscaling_enabled   = "${var.enable_cluster_autoscaling}"
+      protect_from_scale_in = "${var.enable_cluster_autoscaling}"
     },
   ]
+
+  horizontal_pod_autoscaler_defaults = {}
+
+  cluster_autoscaler_defaults = {
+    namespace               = "kube-system"
+    scale-down-enabled      = "true"
+    scale-down-uneeded-time = 10
+    scan-interval           = 10
+  }
+
+  enable_helm = "${var.enable_cluster_autoscaling || var.enable_pod_autoscaling ? 1 : 0}"
 
   master_config_services_proxy = [
     {

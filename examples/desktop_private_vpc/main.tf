@@ -17,5 +17,4 @@ module "eks" {
   aws_authenticator_env_variables = "${local.aws_authenticator_env_variables}"
   tags                            = "${local.tags}"
   cluster_version                 = "${var.cluster_version}"
-
 }

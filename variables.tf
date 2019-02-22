@@ -65,8 +65,13 @@ variable "tags" {
   default     = {}
 }
 
-variable "autoscaling" {
+variable "enable_cluster_autoscaling" {
   description = "Turn autoscaling on for your worker group"
+  default     = false
+}
+
+variable "enable_pod_autoscaling" {
+  description = "Enable horizontal pod autoscaling"
   default     = false
 }
 

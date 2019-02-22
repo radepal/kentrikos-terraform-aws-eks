@@ -82,3 +82,28 @@ resource "null_resource" "master_config_services_proxy" {
   EOC
   }
 }
+
+data "template_file" "helm_rbac_config" {
+  template = "${file("${path.module}/templates/helm_rbac_config.yaml.tpl")}"
+}
+
+resource "local_file" "helm_rbac_config" {
+  count      = "${local.enable_helm}"
+  filename   = "${var.outputs_directory}helm_rbac_config.yaml"
+  content    = "${data.template_file.helm_rbac_config.rendered}"
+  depends_on = ["module.eks"]
+}
+
+resource "null_resource" "enable_helm" {
+  count = "${local.enable_helm}"
+
+  provisioner "local-exec" {
+    command = "kubectl apply -f ${local_file.helm_rbac_config.filename} --kubeconfig=${var.outputs_directory}kubeconfig_${var.cluster_prefix}"
+  }
+
+  provisioner "local-exec" {
+    command = "helm init --service-account tiller"
+  }
+
+  depends_on = ["null_resource.master_config_services_proxy", "local_file.helm_rbac_config"]
+}
