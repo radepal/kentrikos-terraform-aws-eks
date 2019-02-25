@@ -102,7 +102,7 @@ resource "null_resource" "enable_helm" {
   }
 
   provisioner "local-exec" {
-    command = "helm init --service-account tiller"
+    command = "helm init --service-account tiller --kubeconfig=${var.outputs_directory}kubeconfig_${var.cluster_prefix}"
   }
 
   depends_on = ["null_resource.master_config_services_proxy", "local_file.helm_rbac_config"]
