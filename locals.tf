@@ -11,7 +11,7 @@ locals {
       additional_userdata   = ""                                                      # userdata to append to the default userdata.
       subnets               = "${join(",", var.private_subnets)}"                     # A comma delimited string of subnets to place the worker nodes in. i.e. subnet-123,subnet-456,subnet-789
       autoscaling_enabled   = "${var.enable_cluster_autoscaling}"
-      protect_from_scale_in = "${var.enable_cluster_autoscaling}"
+      protect_from_scale_in = "${var.scaleinprotection}"
     },
   ]
 
@@ -19,7 +19,7 @@ locals {
 
   cluster_autoscaler_defaults = {
     namespace               = "kube-system"
-    scale-down-enabled      = "true"
+    scale-down-enabled      = "${var.scaleinprotection}"
     scale-down-uneeded-time = 10
     scan-interval           = 10
   }

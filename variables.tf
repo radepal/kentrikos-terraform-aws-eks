@@ -50,7 +50,7 @@ variable "min_worker_nodes" {
 }
 
 variable "worker_node_instance_type" {
-  default = "m4.large"
+  default = "t3.small"
 }
 
 variable "aws_authenticator_env_variables" {
@@ -78,4 +78,14 @@ variable "enable_pod_autoscaling" {
 variable "cluster_version" {
   description = "Version of k8s to use (eks version is derived from here)"
   default     = "1.10"
+}
+
+variable "scaleinprotection" {
+  description = "Protect nodes from scale in: # of nodes grow, will not shrink."
+  default     = false
+}
+
+variable "owner" {
+  description = "Who is responsible for this resource."
+  default     = "Peter Parker"
 }

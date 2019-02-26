@@ -21,3 +21,7 @@ variable "enable_cluster_autoscaling" {}
 variable "enable_pod_autoscaling" {}
 
 variable "cluster_version" {}
+
+variable "owner" {}
+
+variable "scaleinprotection" {}
