@@ -1,4 +1,5 @@
 # A Terraform module to deploy an AWS EKS Cluster
+# Behind a (corporate) proxy
 
 This module will create an **[AWS EKS](https://docs.aws.amazon.com/eks/index.html)** cluster and is a terraform wrapper for the official **[AWS terraform EKS module](https://registry.terraform.io/modules/terraform-aws-modules/eks/aws)** to provide ease of deployment with environments that may need use of a proxy for connectivity in a private VPC.
 
