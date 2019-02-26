@@ -94,8 +94,12 @@ resource "local_file" "helm_rbac_config" {
   depends_on = ["module.eks"]
 }
 
-resource "null_resource" "enable_helm" {
+resource "null_resource" "initialize_helm" {
   count = "${local.enable_helm}"
+
+  provisioner "local-exec" {
+    command = "${path.module}/scripts/validate_dns.sh ${var.outputs_directory}kubeconfig_${var.cluster_prefix}"
+  }
 
   provisioner "local-exec" {
     command = "kubectl apply -f ${local_file.helm_rbac_config.filename} --kubeconfig=${var.outputs_directory}kubeconfig_${var.cluster_prefix}"
@@ -103,6 +107,14 @@ resource "null_resource" "enable_helm" {
 
   provisioner "local-exec" {
     command = "helm init --service-account tiller --kubeconfig=${var.outputs_directory}kubeconfig_${var.cluster_prefix}"
+  }
+
+  provisioner "local-exec" {
+    command = "sh ${path.module}/scripts/check_tiller_pod.sh ${var.outputs_directory}kubeconfig_${var.cluster_prefix}"
+  }
+
+  provisioner "local-exec" {
+    command = "helm install stable/metrics-server --name metrics-server --version 2.0.4 --namespace metrics  --kubeconfig=${var.outputs_directory}kubeconfig_${var.cluster_prefix}"
   }
 
   depends_on = ["null_resource.master_config_services_proxy", "local_file.helm_rbac_config"]

@@ -1,5 +1,5 @@
 provider "aws" {
-  region  = "${var.region}"
+  region = "${var.region}"
 }
 
 module "eks" {
@@ -15,4 +15,7 @@ module "eks" {
   desired_worker_nodes            = 3
   aws_authenticator_env_variables = "${local.aws_authenticator_env_variables}"
   tags                            = "${local.tags}"
+  cluster_version                 = "${var.cluster_version}"
+  enable_cluster_autoscaling      = "${var.enable_cluster_autoscaling}"
+  enable_pod_autoscaling          = "${var.enable_pod_autoscaling}"
 }

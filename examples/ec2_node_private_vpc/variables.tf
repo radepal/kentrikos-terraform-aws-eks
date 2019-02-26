@@ -13,3 +13,9 @@ variable "http_proxy" {}
 variable "no_proxy" {}
 
 variable "key_name" {}
+
+variable "enable_cluster_autoscaling" {}
+
+variable "enable_pod_autoscaling" {}
+
+variable "cluster_version" {}
