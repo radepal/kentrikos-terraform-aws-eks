@@ -27,38 +27,6 @@ Depending on your need, go to the appropriate folder and run:
 
 #### List of all variables used:  
 
-
-
-
-| Name | Description | Type | Default | Example | Required |
-|------|-------------|:----:|:-----:|:-----:|:-----:|
-| product\_domain\_name | Name of your product-domain (used in a tag) | string | n/a | "ec2\_node\_private\_vpc" | no |
-| environment\_type | Environment where this deployment runs in (used in a tag) | string | n/a | "dev" | no |
-| cluster\_prefix | Name prefix of your EKS cluster | string | n/a | "my-eks" | yes |
-| desired\_worker\_nodes | Desired amount of worker nodes (needs to be => then minimum worker nodes) | string | `"1"` | "3" | no |
-| max\_worker\_nodes | Maximum amount of worker nodes to spin up | string | `"6"` | "4" | no |
-| min\_worker\_nodes | Minimum amount of worker nodes in cluster | string | `"1"` | "1" | no |
-| http\_proxy | IP[:PORT] address and  port of HTTP proxy for your environment | string | `""` | "http://1.1.1.1:80" | no |
-| key\_name | Key pair to use to access the instance created by the ASG/LC | string | n/a | "my-key-pair" | yes |
-| no\_proxy | Endpoint that do not need to go through proxy | string | `""` | "localhost,127.0.0.1,10.0.0.0/8,172.16.0.0/12,.internal" | no |
-| outputs\_directory | The local folder path to store output files. Must end with '/' . | string | `"./output/"` | "./my-output" | no |
-| private\_subnets | All private subnets in your VPC | list | n/a | "["subnet-12345678", "subnet-23456789", "subnet-34567890"]" | yes |
-| region | AWS region | string | n/a | "us-east-1" | yes |
-| tags | Map of tags to apply to deployed resources | map | `<map>` | | no |
-| vpc\_id | ID of VPC to deploy the cluster | string | n/a | "vpc-12345678" | yes |
-| worker\_node\_instance\_type |  | string | `"m4.large"` | "t3.medium" | no |
-| enable\_pod\_autoscaling | Enable horizontal autoscaling (pods) | boolean | false | true | yes |
-| enable\_cluster\_autoscaling | Enable vertical autoscaling (nodes) | boolean | false | true | yes |
-| scaleinprotection | enable scale in prevention for worker nodes | boolean | false | false | yes |
-| owner | add owner description to tags set on resources | string | n/a | Foo Bar | no|
-
-
- See "Notes" for an example tfvars file.
-
-
-## Notes
-User controlable variables:  
-
 *  **region**   
 *  **vpc\_id**  
 *  **private\_subnets**  
@@ -76,6 +44,36 @@ User controlable variables:
 *  **enable\_cluster\_autoscaling**
 *  **scaleinprotection**    
 *  **owner**
+
+#### Explanation and usage:
+
+| Name | Description | Type | Default | Required |
+|------|-------------|:----:|:-------:|:--------:|
+| **product\_domain\_name** | Name of your product-domain (used in a tag) | string | n/a | no |
+| **environment\_type** | Environment where this deployment runs in (used in a tag) | string | n/a | no|
+| **cluster\_prefix** | Name prefix of your EKS cluster | string | n/a | yes |
+| **desired\_worker\_nodes** | Desired amount of worker nodes (needs to be => then minimum worker nodes) | string | `"1"` | no |
+| **http\_proxy** | IP[:PORT] address and  port of HTTP proxy for your environment | string | `""` | no |
+| **key\_name** | Existing key-pair to use to access the instance created by the ASG/LC | string | n/a | yes |
+| **max\_worker\_nodes** | Maximum amount of worker nodes to spin up | string | `"6"` | no |
+| **min\_worker\_nodes** | Minimum amount of worker nodes (needs to be <= then desired worker nodes). | string | `"1"` | no |
+| **no\_proxy** | Endpoint that do not need to go through proxy | string | `""` | no |
+| **outputs\_directory** | The local folder path to store output files. Must end with '/' . | string | `"./output/"` | no |
+| **private\_subnets** | All private subnets in your VPC | list | n/a | yes |
+| **region** | AWS region | string | n/a | yes |
+| **tags** | Map of tags to apply to deployed resources | map | `<map>` | no |
+| **vpc\_id** | ID of VPC to deploy the cluster | string | n/a | yes |
+| **worker\_node\_instance\_type** | Determines the type to use to build your worker group (cluster) | string | `"m4.large"` | no |
+| **enable\_pod\_autoscaling** | Enable horizontal autoscaling (pods) | boolean | false |yes |
+| **enable\_cluster\_autoscaling** | Enable vertical autoscaling (nodes) | boolean | false | yes |
+| **scaleinprotection** | enable scale in prevention for worker nodes | boolean | false | yes |
+| **owner** | add owner description to tags set on resources | string | n/a | no |
+
+
+#### Example:
+
+
+
 
   
 
