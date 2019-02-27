@@ -19,7 +19,7 @@ locals {
       type = "daemonset"
     },
     {
-      name = "coredns"
+      name = "kube-dns"
       type = "deployment"
     },
     {
