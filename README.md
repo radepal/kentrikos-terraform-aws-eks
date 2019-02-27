@@ -1,5 +1,4 @@
-# A Terraform module to deploy an AWS EKS Cluster
-# Behind a (corporate) proxy
+# A Terraform module to deploy an AWS EKS Cluster Behind a (corporate) proxy
 
 This module will create an **[AWS EKS](https://docs.aws.amazon.com/eks/index.html)** cluster and is a terraform wrapper for the official **[AWS terraform EKS module](https://registry.terraform.io/modules/terraform-aws-modules/eks/aws)** to provide ease of deployment with environments that may need use of a proxy for connectivity in a private VPC.
 
@@ -48,6 +47,10 @@ Depending on your need, go to the appropriate folder and run:
 | tags | Map of tags to apply to deployed resources | map | `<map>` | no |
 | vpc\_id | ID of VPC to deploy the cluster | string | n/a | yes |
 | worker\_node\_instance\_type |  | string | `"m4.large"` | no |
+| enable\_pod\_autoscaling | Enable horizontal autoscaling (pods) | bolean | false | yes |
+| enable\_cluster\_autoscaling | Enable vertical autoscaling (nodes) | bolean | false | yes |
+| scaleinprotection | enable scale in prevention for worker nodes | bolean | false | yes |
+| owner | add owner description to tags set on resources | string | n/a | no|
 
 
  See "Notes" for an example tfvars file.
@@ -80,8 +83,7 @@ As an example, here is a terraform.auto.tfvars file which allows the EKS cluster
 |**environment\_type** | "dev"|environment this deployment lives in. |
 |**key\_name** | "my-key-pair"| existing key-pair to be able to connect to the nodes.|  
 
-Please provide the vars file in this format: variable_name = "Variable Value".  
-If any of the above information is not provided in a 'tfvars' file, terraform will ask for this information. 
+Please provide the vars file in this format: variable_name = "Variable Value".   
 
 ## Outputs
 
