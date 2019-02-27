@@ -98,7 +98,11 @@ resource "null_resource" "initialize_helm" {
   count = "${local.enable_helm}"
 
   provisioner "local-exec" {
-    command = "${path.module}/scripts/validate_dns.sh ${var.outputs_directory}kubeconfig_${var.cluster_prefix}"
+    command = <<EOC
+    /bin/sh \
+      ${path.module}/scripts/validate_dns.sh \
+      ${var.outputs_directory}kubeconfig_${var.cluster_prefix}
+    EOC
   }
 
   provisioner "local-exec" {
@@ -110,7 +114,11 @@ resource "null_resource" "initialize_helm" {
   }
 
   provisioner "local-exec" {
-    command = "sh ${path.module}/scripts/check_tiller_pod.sh ${var.outputs_directory}kubeconfig_${var.cluster_prefix}"
+    command = <<EOC
+    /bin/sh \
+      ${path.module}/scripts/check_tiller_pod.sh \ 
+      ${var.outputs_directory}kubeconfig_${var.cluster_prefix}
+    EOC
   }
 
   provisioner "local-exec" {
