@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [not named yet] - undated
 ### Added
-- for pod autoscaling added:
+- **for pod autoscaling added:**
   - variables for proxy / no_proxy
   - create template file proxy-environment-variables.yaml
   - create template file workergroup_proxy.tpl
@@ -25,9 +25,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - helm_rbac_config
   - installed metrics server on the EKS cluster
   - allowed to toggle horiontal scaling (pods)
+
+- **for cluster autoscaling added:**
   - allowed to toggle vertical scaling (nodes)
-- for cluster autoscaling added:
+  - template cluster_autoscaling.yaml.tpl
   - "null_resource" "initialize_cluster_autoscaling" to main.tf
   - "local_file" "cluster_autoscaling" to main.tf
   - "template_file" "cluster_autoscaling" to main.tf
   - variable "enable_cluster_autoscaling" {} to variables.tf
+  - helm install stable/cluster-autoscaler
+    - referencing github project: https://github.com/helm/charts/tree/master/stable/cluster-autoscaler
+
+
