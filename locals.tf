@@ -26,6 +26,8 @@ locals {
 
   enable_helm = "${var.enable_cluster_autoscaling || var.enable_pod_autoscaling ? 1 : 0}"
 
+  enable_cluster_autoscaling = "${var.enable_cluster_autoscaling}"
+
   master_config_services_proxy = [
     {
       name = "kube-proxy"

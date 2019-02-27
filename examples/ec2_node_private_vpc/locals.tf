@@ -4,7 +4,7 @@ locals {
   }
 
   tags = {
-    Owner         = "Peter Parker"
+    Owner         = "${var.owner}"
     ProductDomain = "${var.cluster_prefix}"
     Environment   = "dev"
   }

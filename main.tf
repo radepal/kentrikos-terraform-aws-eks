@@ -100,8 +100,7 @@ resource "null_resource" "initialize_helm" {
   provisioner "local-exec" {
     command = <<EOC
     /bin/sh \
-      ${path.module}/scripts/validate_dns.sh \
-      ${var.outputs_directory}kubeconfig_${var.cluster_prefix}
+      ${path.module}/scripts/validate_dns.sh ${var.outputs_directory}kubeconfig_${var.cluster_prefix}
     EOC
   }
 
@@ -116,8 +115,7 @@ resource "null_resource" "initialize_helm" {
   provisioner "local-exec" {
     command = <<EOC
     /bin/sh \
-      ${path.module}/scripts/check_tiller_pod.sh \ 
-      ${var.outputs_directory}kubeconfig_${var.cluster_prefix}
+      ${path.module}/scripts/check_tiller_pod.sh ${var.outputs_directory}kubeconfig_${var.cluster_prefix}
     EOC
   }
 
@@ -126,4 +124,30 @@ resource "null_resource" "initialize_helm" {
   }
 
   depends_on = ["null_resource.master_config_services_proxy", "local_file.helm_rbac_config"]
+}
+
+data "template_file" "cluster_autoscaling" {
+  template = "${file("${path.module}/templates/cluster_autoscaling.yaml.tpl")}"
+
+  vars {
+    http_proxy   = "${var.http_proxy}"
+    https_proxy  = "${var.http_proxy}"
+    no_proxy     = "${var.no_proxy}"
+    region       = "${var.region}"
+    cluster_name = "${var.cluster_prefix}"
+  }
+}
+
+resource "local_file" "cluster_autoscaling" {
+  count    = "${local.enable_cluster_autoscaling}"
+  filename = "${var.outputs_directory}cluster_autoscaling.yaml"
+  content  = "${data.template_file.cluster_autoscaling.rendered}"
+}
+
+resource "null_resource" "initialize_cluster_autoscaling" {
+  count = "${local.enable_cluster_autoscaling}"
+
+  provisioner "local-exec" {
+    command = "helm install stable/cluster-autoscaler --values=${local_file.cluster_autoscaling.filename} --kubeconfig=${var.outputs_directory}kubeconfig_${var.cluster_prefix}"
+  }
 }

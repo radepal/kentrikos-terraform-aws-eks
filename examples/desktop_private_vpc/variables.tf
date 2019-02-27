@@ -25,3 +25,4 @@ variable "cluster_version" {}
 variable "owner" {}
 
 variable "scaleinprotection" {}
+variable "desired_worker_nodes" {}
