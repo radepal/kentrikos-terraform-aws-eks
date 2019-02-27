@@ -30,27 +30,27 @@ Depending on your need, go to the appropriate folder and run:
 
 
 
-| Name | Description | Type | Default | Required |
-|------|-------------|:----:|:-----:|:-----:|
-| product\_domain\_name | Name of your product-domain (used in a tag) | string | n/a | no |
-| environment\_type | Environment where this deployment runs in (used in a tag) | string | n/a | no|
-| cluster\_prefix | Name prefix of your EKS cluster | string | n/a | yes |
-| desired\_worker\_nodes | Desired amount of worker nodes (needs to be => then minimum worker nodes) | string | `"1"` | no |
-| http\_proxy | IP[:PORT] address and  port of HTTP proxy for your environment | string | `""` | no |
-| key\_name | Key pair to use to access the instance created by the ASG/LC | string | n/a | yes |
-| max\_worker\_nodes | Maximum amount of worker nodes to spin up | string | `"6"` | no |
-| min\_worker\_nodes | Minimum amount of worker nodes (needs to be <= then desired worker nodes). | string | `"1"` | no |
-| no\_proxy | Endpoint that do not need to go through proxy | string | `""` | no |
-| outputs\_directory | The local folder path to store output files. Must end with '/' . | string | `"./output/"` | no |
-| private\_subnets | All private subnets in your VPC | list | n/a | yes |
-| region | AWS region | string | n/a | yes |
-| tags | Map of tags to apply to deployed resources | map | `<map>` | no |
-| vpc\_id | ID of VPC to deploy the cluster | string | n/a | yes |
-| worker\_node\_instance\_type |  | string | `"m4.large"` | no |
-| enable\_pod\_autoscaling | Enable horizontal autoscaling (pods) | bolean | false | yes |
-| enable\_cluster\_autoscaling | Enable vertical autoscaling (nodes) | bolean | false | yes |
-| scaleinprotection | enable scale in prevention for worker nodes | bolean | false | yes |
-| owner | add owner description to tags set on resources | string | n/a | no|
+| Name | Description | Type | Default | Example | Required |
+|------|-------------|:----:|:-----:|:-----:|:-----:|
+| product\_domain\_name | Name of your product-domain (used in a tag) | string | n/a | "ec2\_node\_private\_vpc" | no |
+| environment\_type | Environment where this deployment runs in (used in a tag) | string | n/a | "dev" | no |
+| cluster\_prefix | Name prefix of your EKS cluster | string | n/a | "my-eks" | yes |
+| desired\_worker\_nodes | Desired amount of worker nodes (needs to be => then minimum worker nodes) | string | `"1"` | "3" | no |
+| max\_worker\_nodes | Maximum amount of worker nodes to spin up | string | `"6"` | "4" | no |
+| min\_worker\_nodes | Minimum amount of worker nodes in cluster | string | `"1"` | "1" | no |
+| http\_proxy | IP[:PORT] address and  port of HTTP proxy for your environment | string | `""` | "http://1.1.1.1:80" | no |
+| key\_name | Key pair to use to access the instance created by the ASG/LC | string | n/a | "my-key-pair" | yes |
+| no\_proxy | Endpoint that do not need to go through proxy | string | `""` | "localhost,127.0.0.1,10.0.0.0/8,172.16.0.0/12,.internal" | no |
+| outputs\_directory | The local folder path to store output files. Must end with '/' . | string | `"./output/"` | "./my-output" | no |
+| private\_subnets | All private subnets in your VPC | list | n/a | "["subnet-12345678", "subnet-23456789", "subnet-34567890"]" | yes |
+| region | AWS region | string | n/a | "us-east-1" | yes |
+| tags | Map of tags to apply to deployed resources | map | `<map>` | | no |
+| vpc\_id | ID of VPC to deploy the cluster | string | n/a | "vpc-12345678" | yes |
+| worker\_node\_instance\_type |  | string | `"m4.large"` | "t3.medium" | no |
+| enable\_pod\_autoscaling | Enable horizontal autoscaling (pods) | boolean | false | true | yes |
+| enable\_cluster\_autoscaling | Enable vertical autoscaling (nodes) | boolean | false | true | yes |
+| scaleinprotection | enable scale in prevention for worker nodes | boolean | false | false | yes |
+| owner | add owner description to tags set on resources | string | n/a | Foo Bar | no|
 
 
  See "Notes" for an example tfvars file.
@@ -68,22 +68,16 @@ User controlable variables:
 *  **product\_domain_name**  
 *  **environment\_type**  
 *  **key\_name**  
+*  **desired\_worker\_nodes**  
+*  **max\_worker\_nodes**  
+*  **min\_worker\_nodes**  
+*  **worker\_node\_instance\_type**  
+*  **enable\_pod\_autoscaling**  
+*  **enable\_cluster\_autoscaling**
+*  **scaleinprotection**    
+*  **owner**
 
-As an example, here is a terraform.auto.tfvars file which allows the EKS cluster to be created (put this file in the folder you run terraform from and it will pick up all the needed info):
-
-|Variable|Value|	explanation|
-|------|-------------|----|
-|**region** | "us-east-1"|the region you want to deploy the EKS.|
-|**vpc_id** | "vpc-12345678"|your VPC ID to deploy the EKS to. |
-|**private\_subnets** |"["subnet-12345678", "subnet-23456789", "subnet-34567890"]"|your private subnets in the VPC to use for the EKS, in a list format.|
-|**cluster\_prefix** | "my-eks" | the unique name for your EKS cluster.|
-|**http\_proxy** | "http://1.1.1.1:80"|your proxy in the transit account.| 
-|**no\_proxy** | "localhost,127.0.0.1,10.0.0.0/8,172.16.0.0/12,.internal"|the endpoint(s) that should not use the above described proxy. |
-|**product\_domain\_name** | "ec2\_node\_private\_vpc"| the name of your product.  This is used as a tag.|
-|**environment\_type** | "dev"|environment this deployment lives in. |
-|**key\_name** | "my-key-pair"| existing key-pair to be able to connect to the nodes.|  
-
-Please provide the vars file in this format: variable_name = "Variable Value".   
+  
 
 ## Outputs
 
