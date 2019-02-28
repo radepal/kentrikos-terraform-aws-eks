@@ -4,12 +4,6 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.1.0] - 2019-02-27
-### Added
-- Base EKS module for deployment of Kubernetes cluster v1.10
-- Proxy configuration to allow EKS cluster to operate in private VPC environment
-- Pining versions
-- This CHANGELOG file
 
 ## [not named yet] - undated
 ### Added
@@ -24,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - tiller-pod readiness
   - helm_rbac_config
   - installed metrics server on the EKS cluster
+    - referencing github project: https://github.com/helm/charts/tree/master/stable/metrics-server
   - allowed to toggle horiontal scaling (pods)
 
 - **for cluster autoscaling added:**
@@ -35,5 +30,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - variable "enable_cluster_autoscaling" {} to variables.tf
   - helm install stable/cluster-autoscaler
     - referencing github project: https://github.com/helm/charts/tree/master/stable/cluster-autoscaler
+
+
+## [0.1.0] - 2019-02-27
+### Added
+- Base EKS module for deployment of Kubernetes cluster v1.10
+- Proxy configuration to allow EKS cluster to operate in private VPC environment
+- Pining versions
+- This CHANGELOG file
+
 
 
