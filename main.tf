@@ -83,6 +83,17 @@ resource "null_resource" "master_config_services_proxy" {
   }
 }
 
+resource "null_resource" "validate_dns" {
+  provisioner "local-exec" {
+    command = <<EOC
+    /bin/sh \
+      ${path.module}/scripts/validate_dns.sh ${var.outputs_directory}kubeconfig_${var.cluster_prefix}
+    EOC
+  }
+
+  depends_on = ["module.eks", "null_resource.master_config_services_proxy"]
+}
+
 data "template_file" "helm_rbac_config" {
   template = "${file("${path.module}/templates/helm_rbac_config.yaml.tpl")}"
 }
@@ -96,13 +107,6 @@ resource "local_file" "helm_rbac_config" {
 
 resource "null_resource" "initialize_helm" {
   count = "${local.enable_helm}"
-
-  provisioner "local-exec" {
-    command = <<EOC
-    /bin/sh \
-      ${path.module}/scripts/validate_dns.sh ${var.outputs_directory}kubeconfig_${var.cluster_prefix}
-    EOC
-  }
 
   provisioner "local-exec" {
     command = "kubectl apply -f ${local_file.helm_rbac_config.filename} --kubeconfig=${var.outputs_directory}kubeconfig_${var.cluster_prefix}"
@@ -119,11 +123,17 @@ resource "null_resource" "initialize_helm" {
     EOC
   }
 
+  depends_on = ["null_resource.validate_dns", "local_file.helm_rbac_config"]
+}
+
+resource "null_resource" "install_metrics_server" {
+  count = "${local.enable_helm}" #only for pod autoscaling
+
   provisioner "local-exec" {
     command = "helm install stable/metrics-server --name metrics-server --version 2.0.4 --namespace metrics  --kubeconfig=${var.outputs_directory}kubeconfig_${var.cluster_prefix}"
   }
 
-  depends_on = ["null_resource.master_config_services_proxy", "local_file.helm_rbac_config"]
+  depends_on = ["null_resource.initialize_helm"]
 }
 
 data "template_file" "cluster_autoscaling" {
@@ -150,4 +160,6 @@ resource "null_resource" "initialize_cluster_autoscaling" {
   provisioner "local-exec" {
     command = "helm install stable/cluster-autoscaler --values=${local_file.cluster_autoscaling.filename} --kubeconfig=${var.outputs_directory}kubeconfig_${var.cluster_prefix}"
   }
+
+  depends_on = ["null_resource.initialize_helm"]
 }
