@@ -5,7 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
-## [not named yet] - undated
+## [0.2.0] [2019-03-01]
 ### Added
 - **for pod autoscaling added:**
   - variables for proxy / no_proxy
@@ -27,9 +27,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - "null_resource" "initialize_cluster_autoscaling" to main.tf
   - "local_file" "cluster_autoscaling" to main.tf
   - "template_file" "cluster_autoscaling" to main.tf
-  - variable "enable_cluster_autoscaling" {} to variables.tf
+  - variable "enable_cluster_autoscaling" to variables.tf
+  - variable "desired_worker_nodes" to set initial nodes to run
   - helm install stable/cluster-autoscaler
     - referencing github project: https://github.com/helm/charts/tree/master/stable/cluster-autoscaler
+  - set up dependencies to guarantee steps are running in proper order
 
 
 ## [0.1.0] - 2019-02-27
