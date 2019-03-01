@@ -65,7 +65,7 @@ resource "null_resource" "proxy_environment_variables" {
   depends_on = ["module.eks", "local_file.proxy_environment_variables"]
 
   provisioner "local-exec" {
-    command = "kubectl apply -f ${local_file.proxy_environment_variables.filename} --kubeconfig=${var.outputs_directory}kubeconfig_${var.cluster_prefix}"
+    command = "kubectl apply -f \"${local_file.proxy_environment_variables.filename}\" --kubeconfig=\"${var.outputs_directory}kubeconfig_${var.cluster_prefix}\""
   }
 }
 
@@ -87,7 +87,7 @@ resource "null_resource" "validate_dns" {
   provisioner "local-exec" {
     command = <<EOC
     /bin/sh \
-      ${path.module}/scripts/validate_dns.sh ${var.outputs_directory}kubeconfig_${var.cluster_prefix}
+      "${path.module}/scripts/validate_dns.sh" "${var.outputs_directory}kubeconfig_${var.cluster_prefix}"
     EOC
   }
 
@@ -109,17 +109,17 @@ resource "null_resource" "initialize_helm" {
   count = "${local.enable_helm}"
 
   provisioner "local-exec" {
-    command = "kubectl apply -f ${local_file.helm_rbac_config.filename} --kubeconfig=${var.outputs_directory}kubeconfig_${var.cluster_prefix}"
+    command = "kubectl apply -f \"${local_file.helm_rbac_config.filename}\" --kubeconfig=\"${var.outputs_directory}kubeconfig_${var.cluster_prefix}\""
   }
 
   provisioner "local-exec" {
-    command = "helm init --service-account tiller --kubeconfig=${var.outputs_directory}kubeconfig_${var.cluster_prefix}"
+    command = "helm init --service-account tiller --kubeconfig=\"${var.outputs_directory}kubeconfig_${var.cluster_prefix}\""
   }
 
   provisioner "local-exec" {
     command = <<EOC
     /bin/sh \
-      ${path.module}/scripts/check_tiller_pod.sh ${var.outputs_directory}kubeconfig_${var.cluster_prefix}
+      "${path.module}/scripts/check_tiller_pod.sh" "${var.outputs_directory}kubeconfig_${var.cluster_prefix}"
     EOC
   }
 
