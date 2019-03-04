@@ -21,6 +21,6 @@ variable "enable_pod_autoscaling" {}
 variable "cluster_version" {}
 variable "owner" {}
 
-variable "scaleinprotection" {}
+variable "protect_cluster_from_scale_in" {}
 
 variable "desired_worker_nodes" {}

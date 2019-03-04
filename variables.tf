@@ -80,7 +80,7 @@ variable "cluster_version" {
   default     = "1.10"
 }
 
-variable "scaleinprotection" {
+variable "protect_cluster_from_scale_in" {
   description = "Protect nodes from scale in: # of nodes grow, will not shrink."
   default     = false
 }

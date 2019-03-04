@@ -42,7 +42,7 @@ Depending on your need, go to the appropriate folder and run:
 *  **worker\_node\_instance\_type**  
 *  **enable\_pod\_autoscaling**  
 *  **enable\_cluster\_autoscaling**
-*  **scaleinprotection**    
+*  **protect_cluster_from_scale_in**    
 
 #### Explanation and usage:
 
@@ -63,7 +63,7 @@ Depending on your need, go to the appropriate folder and run:
 | **worker\_node\_instance\_type** | Determines the type to use to build your worker group (cluster) | string | `"m4.large"` | no |
 | **enable\_pod\_autoscaling** | Enable horizontal autoscaling (pods) | boolean | false |yes |
 | **enable\_cluster\_autoscaling** | Enable vertical autoscaling (nodes) | boolean | false | yes |
-| **scaleinprotection** | enable scale in prevention for worker nodes | boolean | false | yes |
+| **protect\_cluster\_from\_scale\_in** | enable scale in prevention for worker nodes | boolean | false | yes |
 | **tags** | Map of tags to apply to deployed resources | map | `<map>` | no |
 | **outputs\_directory** | The local folder path to store output files. Must end with '/' . | string | `"./output/"` | no |
 
@@ -87,7 +87,7 @@ Depending on your need, go to the appropriate folder and run:
 | **worker\_node\_instance\_type** | "t3.medium" | instance types used in this worker group (the larger, the more free IP's you need) |
 | **enable\_pod\_autoscaling** | true | POD Autoscaling is enabled in your environment (the deployment of your app determines if this is actually utlized)  |
 | **enable\_cluster\_autoscaling** | true | Autoscaling in your worker group is enabled, based on the policy and load |
-| **scaleinprotection** | true | Scale in prevention is set for the worker group (the cluster will scale up (based on enable\_cluster\_autoscaling setting) but not scale down) | 
+| **protect_cluster_from_scale_in** | true | Scale in prevention is set for the worker group (the cluster will scale up (based on enable\_cluster\_autoscaling setting) but not scale down) | 
 | **tags** |  Name = Value | Map of tags to apply to deployed resources |
 | **outputs\_directory** | ./my-output/ | The local folder path to store output files. Must end with '/' |
 
