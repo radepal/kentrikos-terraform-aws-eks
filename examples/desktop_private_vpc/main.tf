@@ -16,4 +16,7 @@ module "eks" {
   desired_worker_nodes            = "${var.desired_worker_nodes}"
   aws_authenticator_env_variables = "${local.aws_authenticator_env_variables}"
   tags                            = "${local.tags}"
+  cluster_version                 = "${var.cluster_version}"
+  enable_cluster_autoscaling      = "${var.enable_cluster_autoscaling}"
+  enable_pod_autoscaling          = "${var.enable_pod_autoscaling}"
 }

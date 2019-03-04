@@ -65,7 +65,22 @@ variable "tags" {
   default     = {}
 }
 
+variable "enable_cluster_autoscaling" {
+  description = "Turn autoscaling on for your worker group"
+  default     = false
+}
+
+variable "enable_pod_autoscaling" {
+  description = "Enable horizontal pod autoscaling"
+  default     = false
+}
+
 variable "cluster_version" {
   description = "Version of k8s to use (eks version is derived from here)"
   default     = "1.10"
+}
+
+variable "protect_cluster_from_scale_in" {
+  description = "Protect nodes from scale in: # of nodes grow, will not shrink."
+  default     = false
 }

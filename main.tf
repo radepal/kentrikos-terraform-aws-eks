@@ -65,7 +65,7 @@ resource "null_resource" "proxy_environment_variables" {
   depends_on = ["module.eks", "local_file.proxy_environment_variables"]
 
   provisioner "local-exec" {
-    command = "kubectl apply -f ${local_file.proxy_environment_variables.filename} --kubeconfig=${var.outputs_directory}kubeconfig_${var.cluster_prefix}"
+    command = "kubectl apply -f \"${local_file.proxy_environment_variables.filename}\" --kubeconfig=\"${var.outputs_directory}kubeconfig_${var.cluster_prefix}\""
   }
 }
 
@@ -81,4 +81,85 @@ resource "null_resource" "master_config_services_proxy" {
     rm ${var.outputs_directory}${lookup(local.master_config_services_proxy[count.index], "name")}.tmp;
   EOC
   }
+}
+
+resource "null_resource" "validate_dns" {
+  provisioner "local-exec" {
+    command = <<EOC
+    /bin/sh \
+      "${path.module}/scripts/validate_dns.sh" "${var.outputs_directory}kubeconfig_${var.cluster_prefix}"
+    EOC
+  }
+
+  depends_on = ["module.eks", "null_resource.master_config_services_proxy"]
+}
+
+data "template_file" "helm_rbac_config" {
+  template = "${file("${path.module}/templates/helm_rbac_config.yaml.tpl")}"
+}
+
+resource "local_file" "helm_rbac_config" {
+  count      = "${local.enable_helm}"
+  filename   = "${var.outputs_directory}helm_rbac_config.yaml"
+  content    = "${data.template_file.helm_rbac_config.rendered}"
+  depends_on = ["module.eks"]
+}
+
+resource "null_resource" "initialize_helm" {
+  count = "${local.enable_helm}"
+
+  provisioner "local-exec" {
+    command = "kubectl apply -f \"${local_file.helm_rbac_config.filename}\" --kubeconfig=\"${var.outputs_directory}kubeconfig_${var.cluster_prefix}\""
+  }
+
+  provisioner "local-exec" {
+    command = "helm init --service-account tiller --kubeconfig=\"${var.outputs_directory}kubeconfig_${var.cluster_prefix}\""
+  }
+
+  provisioner "local-exec" {
+    command = <<EOC
+    /bin/sh \
+      "${path.module}/scripts/check_tiller_pod.sh" "${var.outputs_directory}kubeconfig_${var.cluster_prefix}"
+    EOC
+  }
+
+  depends_on = ["null_resource.validate_dns", "local_file.helm_rbac_config"]
+}
+
+resource "null_resource" "install_metrics_server" {
+  count = "${local.enable_helm}" #only for pod autoscaling
+
+  provisioner "local-exec" {
+    command = "helm install stable/metrics-server --name metrics-server --version 2.0.4 --namespace metrics  --kubeconfig=${var.outputs_directory}kubeconfig_${var.cluster_prefix}"
+  }
+
+  depends_on = ["null_resource.initialize_helm"]
+}
+
+data "template_file" "cluster_autoscaling" {
+  template = "${file("${path.module}/templates/cluster_autoscaling.yaml.tpl")}"
+
+  vars {
+    http_proxy   = "${var.http_proxy}"
+    https_proxy  = "${var.http_proxy}"
+    no_proxy     = "${var.no_proxy}"
+    region       = "${var.region}"
+    cluster_name = "${var.cluster_prefix}"
+  }
+}
+
+resource "local_file" "cluster_autoscaling" {
+  count    = "${local.enable_cluster_autoscaling}"
+  filename = "${var.outputs_directory}cluster_autoscaling.yaml"
+  content  = "${data.template_file.cluster_autoscaling.rendered}"
+}
+
+resource "null_resource" "initialize_cluster_autoscaling" {
+  count = "${local.enable_cluster_autoscaling}"
+
+  provisioner "local-exec" {
+    command = "helm install stable/cluster-autoscaler --values=${local_file.cluster_autoscaling.filename} --kubeconfig=${var.outputs_directory}kubeconfig_${var.cluster_prefix}"
+  }
+
+  depends_on = ["null_resource.initialize_helm"]
 }
