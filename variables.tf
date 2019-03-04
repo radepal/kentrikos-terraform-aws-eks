@@ -84,8 +84,3 @@ variable "scaleinprotection" {
   description = "Protect nodes from scale in: # of nodes grow, will not shrink."
   default     = false
 }
-
-variable "owner" {
-  description = "Who is responsible for this resource."
-  default     = "Peter Parker"
-}

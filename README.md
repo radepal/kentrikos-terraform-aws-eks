@@ -43,7 +43,6 @@ Depending on your need, go to the appropriate folder and run:
 *  **enable\_pod\_autoscaling**  
 *  **enable\_cluster\_autoscaling**
 *  **scaleinprotection**    
-*  **owner**
 
 #### Explanation and usage:
 
@@ -66,7 +65,6 @@ Depending on your need, go to the appropriate folder and run:
 | **enable\_cluster\_autoscaling** | Enable vertical autoscaling (nodes) | boolean | false | yes |
 | **scaleinprotection** | enable scale in prevention for worker nodes | boolean | false | yes |
 | **tags** | Map of tags to apply to deployed resources | map | `<map>` | no |
-| **owner** | add owner description to tags set on resources | string | n/a | no |
 | **outputs\_directory** | The local folder path to store output files. Must end with '/' . | string | `"./output/"` | no |
 
 
@@ -91,7 +89,6 @@ Depending on your need, go to the appropriate folder and run:
 | **enable\_cluster\_autoscaling** | true | Autoscaling in your worker group is enabled, based on the policy and load |
 | **scaleinprotection** | true | Scale in prevention is set for the worker group (the cluster will scale up (based on enable\_cluster\_autoscaling setting) but not scale down) | 
 | **tags** |  Name = Value | Map of tags to apply to deployed resources |
-| **owner** | owner = Peter Parker | add owner description to tags set on EC2 resources |
 | **outputs\_directory** | ./my-output/ | The local folder path to store output files. Must end with '/' |
 
 
