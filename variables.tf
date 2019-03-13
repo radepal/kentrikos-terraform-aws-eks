@@ -11,6 +11,12 @@ variable "private_subnets" {
   description = "All private subnets in your VPC"
 }
 
+variable "public_subnets" {
+  type        = "list"
+  default     = []
+  description = "Public subnets in your VPC EKS can use"
+}
+
 variable "cluster_prefix" {
   description = "Name prefix of your EKS cluster"
 }

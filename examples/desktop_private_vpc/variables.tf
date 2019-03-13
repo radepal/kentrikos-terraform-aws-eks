@@ -6,6 +6,11 @@ variable "private_subnets" {
   type = "list"
 }
 
+variable "public_subnets" {
+  type    = "list"
+  default = []
+}
+
 variable "aws_profile" {}
 
 variable "cluster_prefix" {}
