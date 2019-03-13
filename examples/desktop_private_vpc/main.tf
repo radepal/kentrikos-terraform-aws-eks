@@ -9,6 +9,7 @@ module "eks" {
   region                          = "${var.region}"
   vpc_id                          = "${var.vpc_id}"
   private_subnets                 = "${var.private_subnets}"
+  public_subnets                  = "${var.public_subnets}"
   cluster_prefix                  = "${var.cluster_prefix}"
   http_proxy                      = "${var.http_proxy}"
   no_proxy                        = "${var.no_proxy}"
