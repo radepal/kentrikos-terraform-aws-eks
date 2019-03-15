@@ -18,19 +18,17 @@ module "eks" {
 resource "aws_security_group" "all_worker_mgmt" {
   name_prefix = "all_worker_management"
   vpc_id      = "${var.vpc_id}"
+}
 
-  ingress {
-    from_port = 22
-    to_port   = 22
-    protocol  = "tcp"
+resource "aws_security_group_rule" "allow_ssh" {
+  count       = "${length(var.allowed_worker_ssh_cidrs) != 0 ? 1 : 0}"
+  type        = "ingress"
+  from_port   = 22
+  to_port     = 22
+  protocol    = "tcp"
+  cidr_blocks = ["${var.allowed_worker_ssh_cidrs}"]
 
-    cidr_blocks = [
-      "10.0.0.0/8",
-      "172.16.0.0/12",
-      "192.168.0.0/16",
-      "170.34.0.0/16",
-    ]
-  }
+  security_group_id = "${aws_security_group.all_worker_mgmt.id}"
 }
 
 data "template_file" "http_proxy_workergroup" {
@@ -39,7 +37,7 @@ data "template_file" "http_proxy_workergroup" {
   vars {
     http_proxy   = "${var.http_proxy}"
     https_proxy  = "${var.http_proxy}"
-    no_proxy     = "${var.no_proxy}"
+    no_proxy     = "${local.no_proxy_merged}"
     cluster_name = "${var.cluster_prefix}"
   }
 }
@@ -50,7 +48,7 @@ data "template_file" "proxy_environment_variables" {
   vars {
     http_proxy  = "${var.http_proxy}"
     https_proxy = "${var.http_proxy}"
-    no_proxy    = "${var.no_proxy}"
+    no_proxy    = "${local.no_proxy_merged}"
   }
 }
 
@@ -130,7 +128,7 @@ resource "null_resource" "install_metrics_server" {
   count = "${local.enable_helm}" #only for pod autoscaling
 
   provisioner "local-exec" {
-    command = "helm install stable/metrics-server --name metrics-server --version 2.0.4 --namespace metrics  --kubeconfig=${var.outputs_directory}kubeconfig_${var.cluster_prefix}"
+    command = "helm install stable/metrics-server --name metrics-server --namespace metrics  --kubeconfig=${var.outputs_directory}kubeconfig_${var.cluster_prefix}"
   }
 
   depends_on = ["null_resource.initialize_helm"]
@@ -142,7 +140,7 @@ data "template_file" "cluster_autoscaling" {
   vars {
     http_proxy   = "${var.http_proxy}"
     https_proxy  = "${var.http_proxy}"
-    no_proxy     = "${var.no_proxy}"
+    no_proxy     = "${local.no_proxy_merged}"
     region       = "${var.region}"
     cluster_name = "${var.cluster_prefix}"
   }

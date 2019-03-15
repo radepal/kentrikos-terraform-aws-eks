@@ -11,7 +11,6 @@ The following tools are required for deployment (the versions are needed to supp
   * **aws-iam-authenticator**  
   * **awscli** (version 1.16+)
 
-
 ## Usage
 
 #### Two examples have been provided.  
@@ -27,6 +26,7 @@ Depending on your need, go to the appropriate folder and run:
 
 | Name | Description | Type | Default | Required |
 |------|-------------|:----:|:-----:|:-----:|
+| allowed_worker_ssh_cidrs | List of CIDR ranges to allow SSH access into worker nodes | list | `<list>` | no |
 | aws_authenticator_env_variables | A map of environment variables to use in the eks kubeconfig for aws authenticator | map | `<map>` | no |
 | cluster_prefix | Name prefix of your EKS cluster | string | - | yes |
 | cluster_version | Version of k8s to use (eks version is derived from here) | string | `1.10` | no |
@@ -34,6 +34,7 @@ Depending on your need, go to the appropriate folder and run:
 | enable_cluster_autoscaling | Turn autoscaling on for your worker group | string | `false` | no |
 | enable_pod_autoscaling | Enable horizontal pod autoscaling | string | `false` | no |
 | http_proxy | IP[:PORT] address and  port of HTTP proxy for your environment | string | `` | no |
+| install_helm | Install Helm during the deployment of the module | string | `true` | no |
 | key_name | Key pair to use to access the instance created by the ASG/LC | string | - | yes |
 | max_worker_nodes | Maximum amount of worker nodes to spin up | string | `6` | no |
 | min_worker_nodes | Minimum amount of worker nodes (needs to be <= then desired worker nodes). | string | `1` | no |

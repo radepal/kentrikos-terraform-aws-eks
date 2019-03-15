@@ -90,3 +90,14 @@ variable "protect_cluster_from_scale_in" {
   description = "Protect nodes from scale in: # of nodes grow, will not shrink."
   default     = false
 }
+
+variable "install_helm" {
+  description = "Install Helm during the deployment of the module"
+  default     = true
+}
+
+variable "allowed_worker_ssh_cidrs" {
+  type        = "list"
+  description = "List of CIDR ranges to allow SSH access into worker nodes"
+  default     = []
+}

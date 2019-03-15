@@ -24,7 +24,7 @@ locals {
     scan-interval           = 10
   }
 
-  enable_helm = "${var.enable_cluster_autoscaling || var.enable_pod_autoscaling ? 1 : 0}"
+  enable_helm = "${var.enable_cluster_autoscaling || var.enable_pod_autoscaling || var.install_helm ? 1 : 0}"
 
   enable_cluster_autoscaling = "${var.enable_cluster_autoscaling}"
 
@@ -42,4 +42,8 @@ locals {
       type = "daemonset"
     },
   ]
+
+  no_proxy_default = "localhost,127.0.0.1,169.254.169.254,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16,.local,.internal,.elb.amazonaws.com,.elb.${var.region}.amazonaws.com"
+
+  no_proxy_merged = "${join(",", distinct(concat(split(",", local.no_proxy_default), split(",", var.no_proxy))))}"
 }
