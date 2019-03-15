@@ -11,12 +11,12 @@ if [ "$#" -gt 1 ]; then
 else
     POOL_WAIT_SECONDS=10
 fi
-if [ "$#" -eq 3 ]; then
+if [ "$#" -ge 3 ]; then
     MAX_ATTEMPTS=$3
 else
     MAX_ATTEMPTS=40
 fi
-if [ "$#" -eq 4 ]; then
+if [ "$#" -ge 4 ]; then
     DEBUG=$4
 else
     DEBUG=0
