@@ -4,6 +4,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.2] 2019-03-15
+### Added
+- variable to install helm during deployment
+- Variable to control allowed cidrs for SSH access to worker nodes
+
+### Changed
+- Added default list of kubernetes specific dns exceptions for no_proxy. Values are merged with incoming custom no_proxy variable.
+- Removed embedded CIDR ranges for SSH worker node access (replaced with variable input)
+- Removed specific helm version of metrics-server installation
+
+### Fixed
+- bug in validate_dns script parsing arguments
+
 ## [0.2.1] 2019-03-13
 ### Added
 - tagging public subnets via `public_subnets` variable
