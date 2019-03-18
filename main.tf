@@ -111,6 +111,12 @@ resource "null_resource" "initialize_helm" {
   }
 
   provisioner "local-exec" {
+    command = "kubectl apply -f \"${path.module}/templates/gp2-storage-class.yaml.tpl\" --kubeconfig=\"${var.outputs_directory}kubeconfig_${var.cluster_prefix}\""
+
+    // command = "kubectl patch storageclass gp2 -p "{'metadata':{'annotations':{'storageclass.kubernetes.io/is-default-class':'true'}}}""
+  }
+
+  provisioner "local-exec" {
     command = "helm init --service-account tiller --kubeconfig=\"${var.outputs_directory}kubeconfig_${var.cluster_prefix}\""
   }
 
