@@ -20,4 +20,6 @@ module "eks" {
   cluster_version                 = "${var.cluster_version}"
   enable_cluster_autoscaling      = "${var.enable_cluster_autoscaling}"
   enable_pod_autoscaling          = "${var.enable_pod_autoscaling}"
+  install_helm                    = "${var.install_helm}"
+  allowed_worker_ssh_cidrs        = "${var.allowed_worker_ssh_cidrs}"
 }

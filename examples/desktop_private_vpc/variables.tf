@@ -30,3 +30,12 @@ variable "cluster_version" {}
 variable "protect_cluster_from_scale_in" {}
 
 variable "desired_worker_nodes" {}
+
+variable "allowed_worker_ssh_cidrs" {
+  type    = "list"
+  default = []
+}
+
+variable "install_helm" {
+  default = true
+}
