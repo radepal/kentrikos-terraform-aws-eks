@@ -130,7 +130,7 @@ resource "null_resource" "initialize_storage_class" {
   }
 
   provisioner "local-exec" {
-    command = "kubectl patch storageclass gp2 -p \"{'metadata':{'annotations':{'storageclass.kubernetes.io/is-default-class':'true'}}}\""
+    command = "kubectl patch storageclass gp2 -p '{\"metadata\": {\"annotations\":{\"storageclass.kubernetes.io/is-default-class\":\"true\"}}}'"
   }
 }
 
