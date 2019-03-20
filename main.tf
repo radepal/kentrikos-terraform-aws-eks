@@ -124,16 +124,6 @@ resource "null_resource" "initialize_helm" {
   depends_on = ["null_resource.validate_dns", "local_file.helm_rbac_config"]
 }
 
-resource "null_resource" "initialize_storage_class" {
-  provisioner "local-exec" {
-    command = "kubectl apply -f \"${path.module}/templates/gp2-storage-class.yaml.tpl\" --kubeconfig=\"${var.outputs_directory}kubeconfig_${var.cluster_prefix}\""
-  }
-
-  provisioner "local-exec" {
-    command = "kubectl patch storageclass gp2 -p '{\"metadata\": {\"annotations\":{\"storageclass.kubernetes.io/is-default-class\":\"true\"}}}'"
-  }
-}
-
 resource "null_resource" "install_metrics_server" {
   count = "${local.enable_helm}" #only for pod autoscaling
 
@@ -142,6 +132,22 @@ resource "null_resource" "install_metrics_server" {
   }
 
   depends_on = ["null_resource.initialize_helm"]
+}
+
+data "template_file" "gp2-storage-class" {
+  template = "${file("${path.module}/templates/gp2-storage-class.yaml.tpl")}"
+}
+
+resource "null_resource" "initialize_storage_class" {
+  provisioner "local-exec" {
+    command = "echo \"${data.template_file.gp2-storage-class.rendered}\" | kubectl apply -f - --kubeconfig=\"${var.outputs_directory}kubeconfig_${var.cluster_prefix}\""
+  }
+
+  provisioner "local-exec" {
+    command = "kubectl patch storageclass gp2 -p '{\"metadata\": {\"annotations\":{\"storageclass.kubernetes.io/is-default-class\":\"true\"}}}' --kubeconfig=\"${var.outputs_directory}kubeconfig_${var.cluster_prefix}\""
+  }
+
+  depends_on = ["module.eks"]
 }
 
 data "template_file" "cluster_autoscaling" {
