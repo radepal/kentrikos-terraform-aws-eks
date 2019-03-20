@@ -137,17 +137,11 @@ data "template_file" "cluster_autoscaling" {
   }
 }
 
-resource "local_file" "cluster_autoscaling" {
-  count    = "${local.enable_cluster_autoscaling}"
-  filename = "${var.outputs_directory}cluster_autoscaling.yaml"
-  content  = "${data.template_file.cluster_autoscaling.rendered}"
-}
-
 resource "null_resource" "initialize_cluster_autoscaling" {
   count = "${local.enable_cluster_autoscaling}"
 
   provisioner "local-exec" {
-    command = "helm install stable/cluster-autoscaler --values=${local_file.cluster_autoscaling.filename} --kubeconfig=${var.outputs_directory}kubeconfig_${var.cluster_prefix}"
+    command = "echo \"${data.template_file.cluster_autoscaling.rendered}\" | helm install -f - stable/cluster-autoscaler --kubeconfig=\"${var.outputs_directory}kubeconfig_${var.cluster_prefix}\""
   }
 
   depends_on = ["null_resource.initialize_helm"]
