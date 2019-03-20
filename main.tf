@@ -67,10 +67,7 @@ resource "null_resource" "master_config_services_proxy" {
 
   provisioner "local-exec" {
     command = <<EOC
-    kubectl get ${lookup(local.master_config_services_proxy[count.index], "type")} ${lookup(local.master_config_services_proxy[count.index], "name")} --namespace=kube-system --kubeconfig=${var.outputs_directory}kubeconfig_${var.cluster_prefix} -o=json > ${var.outputs_directory}${lookup(local.master_config_services_proxy[count.index], "name")}.tmp;
-    jq '.spec.template.spec.containers[] += {"envFrom": [{"configMapRef": {"name": "proxy-environment-variables"}}]}' ${var.outputs_directory}${lookup(local.master_config_services_proxy[count.index], "name")}.tmp > ${var.outputs_directory}${lookup(local.master_config_services_proxy[count.index], "name")}.json;
-    kubectl apply -f ${var.outputs_directory}${lookup(local.master_config_services_proxy[count.index], "name")}.json --kubeconfig=${var.outputs_directory}kubeconfig_${var.cluster_prefix};
-    rm ${var.outputs_directory}${lookup(local.master_config_services_proxy[count.index], "name")}.tmp;
+    kubectl patch ${lookup(local.master_config_services_proxy[count.index], "type")} ${lookup(local.master_config_services_proxy[count.index], "name")} -n kube-system --type='json' -p='[{"op": "add", "path": "/spec/template/spec/containers/0/envFrom", "value": [{"configMapRef": {"name": "proxy-environment-variables"}}] }]' --kubeconfig=${var.outputs_directory}kubeconfig_${var.cluster_prefix}
   EOC
   }
 }
@@ -104,14 +101,20 @@ resource "null_resource" "initialize_helm" {
   depends_on = ["null_resource.validate_dns"]
 }
 
+data "template_file" "gp2-storage-class" {
+  template = "${file("${path.module}/templates/gp2-storage-class.yaml.tpl")}"
+}
+
 resource "null_resource" "initialize_storage_class" {
   provisioner "local-exec" {
-    command = "kubectl apply -f \"${path.module}/templates/gp2-storage-class.yaml.tpl\" --kubeconfig=\"${var.outputs_directory}kubeconfig_${var.cluster_prefix}\""
+    command = "echo \"${data.template_file.gp2-storage-class.rendered}\" | kubectl apply -f - --kubeconfig=\"${var.outputs_directory}kubeconfig_${var.cluster_prefix}\""
   }
 
   provisioner "local-exec" {
-    command = "kubectl patch storageclass gp2 -p '{\"metadata\": {\"annotations\":{\"storageclass.kubernetes.io/is-default-class\":\"true\"}}}'"
+    command = "kubectl patch storageclass gp2 -p '{\"metadata\": {\"annotations\":{\"storageclass.kubernetes.io/is-default-class\":\"true\"}}}' --kubeconfig=\"${var.outputs_directory}kubeconfig_${var.cluster_prefix}\""
   }
+
+  depends_on = ["module.eks"]
 }
 
 resource "null_resource" "install_metrics_server" {
