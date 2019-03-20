@@ -6,7 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Changed
-- Use of terraform helm provider for deployments
+- Reduced number of local files written
+- General code optimizations
 
 ## [0.2.2] 2019-03-15
 ### Added

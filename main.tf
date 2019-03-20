@@ -66,9 +66,7 @@ resource "null_resource" "master_config_services_proxy" {
   depends_on = ["module.eks", "null_resource.proxy_environment_variables"]
 
   provisioner "local-exec" {
-    command = <<EOC
-    kubectl patch ${lookup(local.master_config_services_proxy[count.index], "type")} ${lookup(local.master_config_services_proxy[count.index], "name")} -n kube-system --type='json' -p='[{"op": "add", "path": "/spec/template/spec/containers/0/envFrom", "value": [{"configMapRef": {"name": "proxy-environment-variables"}}] }]' --kubeconfig=${var.outputs_directory}kubeconfig_${var.cluster_prefix}
-  EOC
+    command = "kubectl patch ${lookup(local.master_config_services_proxy[count.index], "type")} ${lookup(local.master_config_services_proxy[count.index], "name")} --namespace kube-system --type='json' -p='[{\"op\": \"add\", \"path\": \"/spec/template/spec/containers/0/envFrom\", \"value\": [{\"configMapRef\": {\"name\": \"proxy-environment-variables\"}}] }]' --kubeconfig=\"${var.outputs_directory}kubeconfig_${var.cluster_prefix}\""
   }
 }
 
