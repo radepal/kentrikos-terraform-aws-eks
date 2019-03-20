@@ -101,6 +101,16 @@ resource "null_resource" "initialize_helm" {
   depends_on = ["null_resource.validate_dns"]
 }
 
+resource "null_resource" "install_metrics_server" {
+  count = "${local.enable_helm}" #only for pod autoscaling
+
+  provisioner "local-exec" {
+    command = "helm install stable/metrics-server --name metrics-server --namespace metrics  --kubeconfig=${var.outputs_directory}kubeconfig_${var.cluster_prefix}"
+  }
+
+  depends_on = ["null_resource.initialize_helm"]
+}
+
 data "template_file" "gp2-storage-class" {
   template = "${file("${path.module}/templates/gp2-storage-class.yaml.tpl")}"
 }
@@ -115,16 +125,6 @@ resource "null_resource" "initialize_storage_class" {
   }
 
   depends_on = ["module.eks"]
-}
-
-resource "null_resource" "install_metrics_server" {
-  count = "${local.enable_helm}" #only for pod autoscaling
-
-  provisioner "local-exec" {
-    command = "helm install stable/metrics-server --name metrics-server --namespace metrics  --kubeconfig=${var.outputs_directory}kubeconfig_${var.cluster_prefix}"
-  }
-
-  depends_on = ["null_resource.initialize_helm"]
 }
 
 data "template_file" "cluster_autoscaling" {
