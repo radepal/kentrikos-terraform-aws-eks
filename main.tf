@@ -141,7 +141,7 @@ resource "null_resource" "initialize_cluster_autoscaling" {
   count = "${local.enable_cluster_autoscaling}"
 
   provisioner "local-exec" {
-    command = "echo \"${data.template_file.cluster_autoscaling.rendered}\" | helm install -f - stable/cluster-autoscaler --kubeconfig=\"${var.outputs_directory}kubeconfig_${var.cluster_prefix}\""
+    command = "echo \"${data.template_file.cluster_autoscaling.rendered}\" | helm install -f - stable/cluster-autoscaler --namespace=kube-system --kubeconfig=\"${var.outputs_directory}kubeconfig_${var.cluster_prefix}\""
   }
 
   depends_on = ["null_resource.initialize_helm"]
