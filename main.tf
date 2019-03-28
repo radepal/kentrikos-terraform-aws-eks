@@ -52,18 +52,12 @@ data "template_file" "proxy_environment_variables" {
   }
 }
 
-resource "local_file" "proxy_environment_variables" {
-  count    = "${var.http_proxy != "" ? 1 : 0 }"
-  filename = "${var.outputs_directory}proxy-environment-variables.yaml"
-  content  = "${data.template_file.proxy_environment_variables.rendered}"
-}
-
 resource "null_resource" "proxy_environment_variables" {
   count      = "${var.http_proxy != "" ? 1 : 0 }"
-  depends_on = ["module.eks", "local_file.proxy_environment_variables"]
+  depends_on = ["module.eks"]
 
   provisioner "local-exec" {
-    command = "kubectl apply -f \"${local_file.proxy_environment_variables.filename}\" --kubeconfig=\"${var.outputs_directory}kubeconfig_${var.cluster_prefix}\""
+    command = "echo \"${data.template_file.proxy_environment_variables.rendered}\" | kubectl apply -f - --kubeconfig=\"${var.outputs_directory}kubeconfig_${var.cluster_prefix}\""
   }
 }
 
@@ -72,12 +66,7 @@ resource "null_resource" "master_config_services_proxy" {
   depends_on = ["module.eks", "null_resource.proxy_environment_variables"]
 
   provisioner "local-exec" {
-    command = <<EOC
-    kubectl get ${lookup(local.master_config_services_proxy[count.index], "type")} ${lookup(local.master_config_services_proxy[count.index], "name")} --namespace=kube-system --kubeconfig=${var.outputs_directory}kubeconfig_${var.cluster_prefix} -o=json > ${var.outputs_directory}${lookup(local.master_config_services_proxy[count.index], "name")}.tmp;
-    jq '.spec.template.spec.containers[] += {"envFrom": [{"configMapRef": {"name": "proxy-environment-variables"}}]}' ${var.outputs_directory}${lookup(local.master_config_services_proxy[count.index], "name")}.tmp > ${var.outputs_directory}${lookup(local.master_config_services_proxy[count.index], "name")}.json;
-    kubectl apply -f ${var.outputs_directory}${lookup(local.master_config_services_proxy[count.index], "name")}.json --kubeconfig=${var.outputs_directory}kubeconfig_${var.cluster_prefix};
-    rm ${var.outputs_directory}${lookup(local.master_config_services_proxy[count.index], "name")}.tmp;
-  EOC
+    command = "kubectl patch ${lookup(local.master_config_services_proxy[count.index], "type")} ${lookup(local.master_config_services_proxy[count.index], "name")} --namespace kube-system --type='json' -p='[{\"op\": \"add\", \"path\": \"/spec/template/spec/containers/0/envFrom\", \"value\": [{\"configMapRef\": {\"name\": \"proxy-environment-variables\"}}] }]' --kubeconfig=\"${var.outputs_directory}kubeconfig_${var.cluster_prefix}\""
   }
 }
 
@@ -96,32 +85,18 @@ data "template_file" "helm_rbac_config" {
   template = "${file("${path.module}/templates/helm_rbac_config.yaml.tpl")}"
 }
 
-resource "local_file" "helm_rbac_config" {
-  count      = "${local.enable_helm}"
-  filename   = "${var.outputs_directory}helm_rbac_config.yaml"
-  content    = "${data.template_file.helm_rbac_config.rendered}"
-  depends_on = ["module.eks"]
-}
-
 resource "null_resource" "initialize_helm" {
   count = "${local.enable_helm}"
 
   provisioner "local-exec" {
-    command = "kubectl apply -f \"${local_file.helm_rbac_config.filename}\" --kubeconfig=\"${var.outputs_directory}kubeconfig_${var.cluster_prefix}\""
+    command = "echo \"${data.template_file.helm_rbac_config.rendered}\" | kubectl apply -f - --kubeconfig=\"${var.outputs_directory}kubeconfig_${var.cluster_prefix}\""
   }
 
   provisioner "local-exec" {
-    command = "helm init --service-account tiller --kubeconfig=\"${var.outputs_directory}kubeconfig_${var.cluster_prefix}\""
+    command = "helm init --service-account tiller --wait --kubeconfig=\"${var.outputs_directory}kubeconfig_${var.cluster_prefix}\""
   }
 
-  provisioner "local-exec" {
-    command = <<EOC
-    /bin/sh \
-      "${path.module}/scripts/check_tiller_pod.sh" "${var.outputs_directory}kubeconfig_${var.cluster_prefix}"
-    EOC
-  }
-
-  depends_on = ["null_resource.validate_dns", "local_file.helm_rbac_config"]
+  depends_on = ["null_resource.validate_dns"]
 }
 
 resource "null_resource" "install_metrics_server" {
@@ -162,17 +137,11 @@ data "template_file" "cluster_autoscaling" {
   }
 }
 
-resource "local_file" "cluster_autoscaling" {
-  count    = "${local.enable_cluster_autoscaling}"
-  filename = "${var.outputs_directory}cluster_autoscaling.yaml"
-  content  = "${data.template_file.cluster_autoscaling.rendered}"
-}
-
 resource "null_resource" "initialize_cluster_autoscaling" {
   count = "${local.enable_cluster_autoscaling}"
 
   provisioner "local-exec" {
-    command = "helm install stable/cluster-autoscaler --values=${local_file.cluster_autoscaling.filename} --kubeconfig=${var.outputs_directory}kubeconfig_${var.cluster_prefix}"
+    command = "echo \"${data.template_file.cluster_autoscaling.rendered}\" | helm install -f - stable/cluster-autoscaler --namespace=kube-system --kubeconfig=\"${var.outputs_directory}kubeconfig_${var.cluster_prefix}\""
   }
 
   depends_on = ["null_resource.initialize_helm"]
