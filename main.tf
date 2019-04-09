@@ -74,7 +74,7 @@ resource "null_resource" "validate_dns" {
   provisioner "local-exec" {
     command = <<EOC
     /bin/sh \
-      "${path.module}/scripts/validate_dns.sh" "${var.outputs_directory}kubeconfig_${var.cluster_prefix}"
+      "${path.module}/scripts/validate_coredns.sh" "${var.outputs_directory}kubeconfig_${var.cluster_prefix}"
     EOC
   }
 
@@ -111,6 +111,10 @@ resource "null_resource" "install_metrics_server" {
 
 data "template_file" "gp2-storage-class" {
   template = "${file("${path.module}/templates/gp2-storage-class.yaml.tpl")}"
+
+  vars {
+    cluster_name = "${var.cluster_prefix}"
+  }
 }
 
 resource "null_resource" "initialize_storage_class" {
