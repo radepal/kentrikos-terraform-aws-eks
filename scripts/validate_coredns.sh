@@ -24,16 +24,21 @@ fi
 
 dnspod="coredns"
 
-echo "\nDNS readiness probe is using   : $KUBECONFIG"
+echo ""
+echo "DNS readiness probe is using   : $KUBECONFIG"
 echo "DNS readiness probe interval is: $POOL_WAIT_SECONDS seconds"
 echo "DNS maximum readiness attempts : $MAX_ATTEMPTS times"
-echo "Maximum wait time for DNS pods to come on-line: $(expr ${POOL_WAIT_SECONDS} \* ${MAX_ATTEMPTS}) seconds.\n"
+echo "Maximum wait time for DNS pods to come on-line: $(expr ${POOL_WAIT_SECONDS} \* ${MAX_ATTEMPTS}) seconds."
+echo ""
+
 sleep ${POOL_WAIT_SECONDS}
 running_dns=$(kubectl --kubeconfig=$KUBECONFIG get pod -n kube-system | grep $dnspod | grep -wo Running | wc -l)
 
 if [[ "${DEBUG}" -gt 0 ]]; then
-    echo "DEBUG:\n$(kubectl --kubeconfig=$KUBECONFIG get pod -n kube-system)\n"
+    echo ""
+    echo "DEBUG: $(kubectl --kubeconfig=$KUBECONFIG get pod -n kube-system)"
     echo "Running DNS pods: $running_dns"
+    echo ""
 fi
 iterator=0
  
@@ -42,18 +47,29 @@ while (( $running_dns < 1 )); do
     echo "DNS readiness probe attempt #${iterator} out of ${MAX_ATTEMPTS}"
     sleep ${POOL_WAIT_SECONDS}
     if [[ "${DEBUG}" -gt 0 ]]; then
-        echo "DEBUG:\n$(kubectl --kubeconfig=$KUBECONFIG get pod -n kube-system)\n"
+        echo ""
+        echo "DEBUG: $(kubectl --kubeconfig=$KUBECONFIG get pod -n kube-system)"
         echo "Running DNS pods: $running_dns"
+        echo ""
     fi
     running_dns=$(kubectl --kubeconfig=$KUBECONFIG get pod -n kube-system | grep $dnspod | grep -wo Running | wc -l)
     if [[ "${iterator}" -eq "${MAX_ATTEMPTS}" ]]; then
-        echo "\n\n>>>> FAILED <<<<\n\n>>>> CoreDNS readiness probe did not pass.... <<<<<\n"
+        echo "#########################################################"
+        echo "#                                                       #"
+        echo "#                  >>>> FAILED <<<<                     #"
+        echo "#                                                       #"
+        echo "#                                                       #"
+        echo "#  >>>> CoreDNS readiness probe did not pass.... <<<<<  #"
+        echo "#                                                       #"
+        echo "#########################################################"
         kubectl --kubeconfig=$KUBECONFIG get pod -n kube-system
         exit 1
     else
         continue
     fi
 done
-echo "\n$dnspod is running...  continuing.\n"
+echo ""
+echo "$dnspod is running...  continuing."
+echo ""
 exit 0
 
