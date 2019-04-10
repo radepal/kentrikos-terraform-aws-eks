@@ -12,6 +12,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Note
 - Due to changes in Kubernetes, this version is not backwards compatible with Kubernetes v1.10 (Kentrikos EKS module v1.0.0)
 
+## [1.0.0] 2019-03-29
+### Notes
+- Stable version
+
 ## [0.2.3] 2019-03-28
 ### Changed
 - Reduced number of local files written
