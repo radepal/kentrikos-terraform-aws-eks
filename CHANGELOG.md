@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bumped EKS terraform module to 2.3.1
 - Bumped kubernetes version to v1.11
 - Changed DNS readiness probe to accommodate dns namechange to coredns
+### Note
+- Due to changes in Kubernetes, this version is not backwards compatible with Kubernetes v1.10 (Kentrikos EKS module v1.0.0)
 
 ## [0.2.3] 2019-03-28
 ### Changed
