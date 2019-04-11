@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Changed DNS readiness probe to accommodate dns namechange to coredns
 ### Note
 - Due to changes in Kubernetes, this version is not backwards compatible with Kubernetes v1.10 (Kentrikos EKS module v1.0.0)
+  
+## [1.1.0] 2019-04-10
+### Added
+- New outputs from original eks module
 
 ## [1.0.0] 2019-03-29
 ### Notes
