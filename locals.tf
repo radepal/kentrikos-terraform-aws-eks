@@ -34,7 +34,7 @@ locals {
       type = "daemonset"
     },
     {
-      name = "kube-dns"   # Accommodate kubernetes 1.10: dns is called 'kube-dns' in 1.11+, dns is called 'coredns'
+      name = "coredns"    # In Kubernetes v1.10: dns is called 'kube-dns'; in v1.11+, dns is called 'coredns', but still has the app tag 'kube-dns'
       type = "deployment"
     },
     {

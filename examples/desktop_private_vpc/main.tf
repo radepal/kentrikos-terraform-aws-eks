@@ -1,6 +1,7 @@
 provider "aws" {
   region  = "${var.region}"
   profile = "${var.aws_profile}"
+  version = "~> 2.5.0"
 }
 
 module "eks" {
