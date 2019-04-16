@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 - Removed GP2 storage creation as per k8s v1.11
 
+### Changed
+- Name change for cluster-autoscaling to not use default helm naming scheme
+
 ## [2.0.0] 2019-04-11
 ### Changed
 - Bumped EKS terraform module to 2.3.1
